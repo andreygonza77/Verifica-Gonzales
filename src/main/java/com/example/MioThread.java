@@ -15,13 +15,12 @@ public class MioThread extends Thread{
     public static ArrayList<String> users = new ArrayList<>();
    
     
-    public MioThread(Socket s) throws IOException{
+    public MioThread(Socket s, ArrayList<Integer> disponibilita, ArrayList<String> users) throws IOException{
         this.s = s;
         in = new BufferedReader(new InputStreamReader(this.s.getInputStream()));
         out = new PrintWriter(this.s.getOutputStream(), true);
-        disponibilita.add(10); // Gold
-        disponibilita.add(30); // Pit
-        disponibilita.add(60); // Parterre
+        this.disponibilita = disponibilita;
+        this.users = users;
     }
 
 
@@ -31,28 +30,34 @@ public class MioThread extends Thread{
             String[] login ={"",""};
             String utente = "";
             out.println("WELCOME");
-            while (!login[0].equals("LOGIN")||login.length!=2 || login[1].isBlank()) {
+            while (!login[0].equals("LOGIN")|| login.length!=2 || login[1].isBlank()) {
                 try {
                     String linea = in.readLine();           
                     login = linea.split(" ", 2);  
-                    utente = login[0];
+                    utente = login[1];
                 } catch (Exception e) {
                     
                 }
-                if (!login[0].equals("LOGIN")||login.length!=2 || login[1].isBlank()) {
+                if (!login[0].equals("LOGIN")|| login.length!=2 || login[1].isBlank()) {
                 out.println("ERR LOGINREQUIRED");
-                
                 }
-/*
-                for(int i = 0; i < users.size(); i++){
-                    if(!utente.equals(users.get(i))){
-                        users.add(utente);
-                    }
-                    else{
-                        out.println("ERR USERINUSE");
-                        break;
-                    }
-                } */
+                if(users.size() != 0){
+                    boolean check = false;
+                    for(int i = 0; i < users.size(); i++){
+                        String user = users.get(i);
+                        if(utente.equals(user)){
+                            check = true;
+                        }
+                    } 
+                    if(check){
+                        login[0] = "ERR USERINUSE";
+                        login[1] = "";
+                        out.println(login[0]);
+                        continue;
+                    } 
+                    else users.add(utente);
+                }
+                users.add(utente);
             }
             out.println("OK");
 
@@ -120,9 +125,5 @@ public class MioThread extends Thread{
     private void setBiglietti(int input, int index){
         int n_biglietti = disponibilita.get(index) - input;
         disponibilita.set(index, n_biglietti);
-    }
-
-    private void buySection(){
-
     }
 }
