@@ -78,7 +78,6 @@ public class MioThread extends Thread{
                         break;
                     case "BUY":
                         synchronized (disponibilita) {
-                            out.println("SONO ENTRATO IN BUY (da cancellare)");
                             linea = in.readLine();
                             String[] biglietto = linea.split(" ", 2);
                             String tipoBiglietto = biglietto[0];
@@ -121,7 +120,7 @@ public class MioThread extends Thread{
             }
         }
         catch(Exception e){
-            
+
         }
     }
 
