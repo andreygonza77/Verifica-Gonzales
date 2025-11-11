@@ -11,8 +11,8 @@ public class MioThread extends Thread{
     private Socket s;
     private BufferedReader in;
     private PrintWriter out;
-    public static ArrayList<Integer> disponibilita = new ArrayList<>();
-    public static ArrayList<String> users = new ArrayList<>();
+    public static ArrayList<Integer> disponibilita;
+    public static ArrayList<String> users;
    
     
     public MioThread(Socket s, ArrayList<Integer> disponibilita, ArrayList<String> users) throws IOException{
@@ -78,29 +78,32 @@ public class MioThread extends Thread{
                         break;
                     case "BUY":
                         synchronized (disponibilita) {
+                            out.println("SONO ENTRATO IN BUY (da cancellare)");
                             linea = in.readLine();
-                            String[] biglietto = linea.split(",", 2);
-                            switch (biglietto[0]) {
+                            String[] biglietto = linea.split(" ", 2);
+                            String tipoBiglietto = biglietto[0];
+                            int qta = Integer.parseInt(biglietto[1]);
+                            switch (tipoBiglietto) {
                                 case "Gold":
-                                    if(!(Integer.parseInt(biglietto[1]) > disponibilita.get(0))){
+                                    if(!(qta > disponibilita.get(0))){
                                         int index = 0;
-                                        setBiglietti(Integer.parseInt(biglietto[1]), index);
+                                        setBiglietti(qta, index);
                                         out.println("OK");
                                     }
                                     else out.print("KO");
                                     break;
                                 case "Pit":
-                                    if(!(Integer.parseInt(biglietto[1]) > disponibilita.get(1))){
+                                    if(!(qta > disponibilita.get(1))){
                                         int index = 1;
-                                        setBiglietti(Integer.parseInt(biglietto[1]), index);
+                                        setBiglietti(qta, index);
                                         out.println("OK");
                                     }
                                     else out.print("KO");
                                     break;
                                 case "Parterre":
-                                    if(!(Integer.parseInt(biglietto[1]) > disponibilita.get(2))){
+                                    if(!(qta > disponibilita.get(2))){
                                         int index = 2;
-                                        setBiglietti(Integer.parseInt(biglietto[1]), index);
+                                        setBiglietti(qta, index);
                                         out.println("OK");
                                     }
                                     else out.print("KO");
@@ -118,7 +121,7 @@ public class MioThread extends Thread{
             }
         }
         catch(Exception e){
-            System.err.println("Errore");
+            
         }
     }
 
